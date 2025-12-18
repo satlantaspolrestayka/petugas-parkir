@@ -3,33 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="format-detection" content="telephone=no">
-    
     <title>Login Petugas Parkir</title>
     
     <style>
-        /* ====== UNIVERSAL RESET ====== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-        }
-        
-        html {
-            height: 100%;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
         }
         
         body {
             min-height: 100vh;
-            min-height: -webkit-fill-available;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
             display: flex;
@@ -38,7 +23,6 @@
             padding: 20px;
         }
         
-        /* ====== LOGIN PAGE ====== */
         .login-container {
             width: 100%;
             max-width: 450px;
@@ -63,41 +47,6 @@
             overflow: hidden;
         }
         
-        .login-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 30px 30px;
-            opacity: 0.3;
-            animation: float 20s linear infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-30px, -30px) rotate(360deg); }
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .login-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            display: inline-block;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
         .login-title {
             font-size: 28px;
             font-weight: 700;
@@ -111,7 +60,6 @@
             font-weight: 300;
         }
         
-        /* ====== LOGIN FORM ====== */
         .login-form {
             padding: 40px 30px;
         }
@@ -160,7 +108,6 @@
             background: white;
             color: #333;
             -webkit-appearance: none;
-            -moz-appearance: none;
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -227,34 +174,20 @@
             overflow: hidden;
         }
         
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
         .login-btn:hover::before {
             left: 100%;
         }
         
         .login-btn:active {
             transform: scale(0.98);
-            box-shadow: 0 2px 10px rgba(46, 204, 113, 0.4);
         }
         
         .login-btn:disabled {
             background: linear-gradient(135deg, #9ca3af, #6b7280);
             cursor: not-allowed;
             opacity: 0.7;
-            box-shadow: none;
         }
         
-        /* ====== INPUT PAGE (HIDDEN INITIALLY) ====== */
         .input-container {
             width: 100%;
             max-width: 500px;
@@ -303,7 +236,6 @@
             font-size: 16px;
         }
         
-        /* ====== INPUT FORM ====== */
         .input-form {
             padding: 30px;
         }
@@ -384,11 +316,6 @@
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
         
-        .number-input.error {
-            border-color: #ef4444;
-            background-color: #fef2f2;
-        }
-        
         .number-input.warning {
             border-color: #f59e0b;
             background-color: #fffbeb;
@@ -406,7 +333,6 @@
             margin: 0;
         }
         
-        /* ====== ACTION BUTTONS ====== */
         .action-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -435,7 +361,6 @@
             background: linear-gradient(135deg, #9ca3af, #6b7280);
             cursor: not-allowed;
             opacity: 0.7;
-            box-shadow: none;
         }
         
         .btn-logout {
@@ -459,7 +384,6 @@
             transform: scale(0.98);
         }
         
-        /* ====== STATUS BAR ====== */
         .status-bar {
             padding: 20px 30px;
             background: #f8f9fa;
@@ -480,7 +404,6 @@
             color: #3498db;
         }
         
-        /* ====== RESPONSIVE ====== */
         @media (max-width: 768px) {
             .login-container,
             .input-container {
@@ -534,117 +457,6 @@
                 font-size: 18px;
             }
         }
-        
-        /* Landscape Mode */
-        @media (orientation: landscape) and (max-height: 600px) {
-            .login-container,
-            .input-container {
-                max-height: 95vh;
-                overflow-y: auto;
-            }
-            
-            .login-header,
-            .input-header {
-                padding: 20px;
-            }
-            
-            .kapasitas-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        /* Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(135deg, #0f172a, #1e293b);
-            }
-            
-            .login-container,
-            .input-container {
-                background: #1e293b;
-                color: #e2e8f0;
-            }
-            
-            .login-header,
-            .input-header {
-                background: linear-gradient(135deg, #0f172a, #334155);
-            }
-            
-            .lokasi-select {
-                background-color: #334155;
-                border-color: #475569;
-                color: #e2e8f0;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            }
-            
-            .password-input {
-                background-color: #334155;
-                border-color: #475569;
-                color: #e2e8f0;
-            }
-            
-            .password-input.error {
-                border-color: #dc2626;
-                background-color: #450a0a;
-            }
-            
-            .password-input.success {
-                border-color: #10b981;
-                background-color: #064e3b;
-            }
-            
-            .input-card {
-                background: #334155;
-                border-color: #475569;
-            }
-            
-            .number-input {
-                background: #1e293b;
-                border-color: #475569;
-                color: #f8fafc;
-            }
-            
-            .number-input:focus {
-                background-color: #0c4a6e;
-                border-color: #38bdf8;
-            }
-            
-            .number-input.error {
-                border-color: #dc2626;
-                background-color: #450a0a;
-            }
-            
-            .number-input.warning {
-                border-color: #d97706;
-                background-color: #451a03;
-            }
-            
-            .number-input:disabled {
-                background-color: #374151;
-                color: #9ca3af;
-            }
-            
-            .capacity-info {
-                color: #cbd5e1;
-            }
-            
-            .password-info {
-                background: #334155;
-                color: #cbd5e1;
-                border-left-color: #38bdf8;
-            }
-            
-            .status-bar {
-                background: #334155;
-                border-top-color: #475569;
-            }
-            
-            .btn-logout {
-                background: #334155;
-                border-color: #475569;
-                color: #e2e8f0;
-            }
-        }
     </style>
 </head>
 <body>
@@ -652,7 +464,6 @@
     <div class="login-container" id="loginPage">
         <div class="login-header">
             <div class="header-content">
-                <div class="login-icon">🚗</div>
                 <h1 class="login-title">PETUGAS PARKIR</h1>
                 <p class="login-subtitle">Operasi Lilin Progo 2025</p>
             </div>
@@ -777,6 +588,10 @@
     </div>
 
     <script>
+        // ====== KONFIGURASI GOOGLE SHEETS ======
+        // SILAHKAN BUAT GOOGLE SHEETS DAN APPS SCRIPT SENDIRI
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9L_7MWX5X5IBKNU-I3AgcqCbg1Mo9SB-rl3xNRrIK4P0DECvuro_ZfQWn5n09fjnspw/exec';
+        
         // ====== DATA KAPASITAS MAKSIMAL DARI CSV ======
         const kapasitasData = {
             "1": { nama: "SENOPATI", alamat: "JL P. SENOPATI", bus: 62, mobil: 200, motor: null },
@@ -817,7 +632,6 @@
 
         // ====== VARIABLES ======
         let currentLokasi = null;
-        let inputTimer = null;
 
         // ====== PASSWORD VALIDATION ======
         function validatePassword() {
@@ -828,7 +642,6 @@
             const selectedLokasi = lokasiSelect.value;
             const enteredPassword = passwordInput.value.trim();
             
-            // Reset styles
             passwordInput.classList.remove('error', 'success');
             loginBtn.disabled = true;
             
@@ -837,7 +650,6 @@
                 return false;
             }
             
-            // Expected password is the location number (e.g., "1" for SENOPATI)
             const expectedPassword = selectedLokasi;
             
             if (enteredPassword === expectedPassword) {
@@ -852,14 +664,13 @@
             return false;
         }
 
-        // ====== AUTO-FILL PASSWORD ON LOCATION SELECT ======
+        // ====== AUTO-FILL PASSWORD ======
         function setupPasswordAutoFill() {
             const lokasiSelect = document.getElementById('lokasiLogin');
             const passwordInput = document.getElementById('passwordInput');
             
             lokasiSelect.addEventListener('change', function() {
                 if (this.value) {
-                    // Auto-fill password with location number
                     passwordInput.value = this.value;
                     validatePassword();
                     passwordInput.focus();
@@ -870,7 +681,6 @@
                 }
             });
             
-            // Also validate when password is typed
             passwordInput.addEventListener('input', validatePassword);
         }
 
@@ -881,14 +691,12 @@
             const lokasiId = select.value;
             const password = passwordInput.value.trim();
             
-            // Validate location selection
             if (!lokasiId) {
                 alert("Silakan pilih lokasi parkir Anda terlebih dahulu");
                 select.focus();
                 return;
             }
             
-            // Validate password
             const expectedPassword = lokasiId;
             if (password !== expectedPassword) {
                 alert("Password salah! Password harus sesuai dengan nomor urut lokasi.\n\nContoh: Lokasi 1 → Password: 1\nLokasi 8 → Password: 8");
@@ -898,29 +706,21 @@
                 return;
             }
             
-            // Set current lokasi
             currentLokasi = lokasiId;
             
-            // Update UI with lokasi info
             document.getElementById('lokasiBadge').textContent = `LOKASI ${lokasiId}`;
             document.getElementById('lokasiNama').textContent = lokasiData[lokasiId].nama;
             document.getElementById('lokasiAlamat').textContent = lokasiData[lokasiId].alamat;
             
-            // Update max capacity info
             updateCapacityInfo(lokasiId);
+            loadLastData(lokasiId);
             
-            // Load draft data if exists
-            loadDraftData(lokasiId);
-            
-            // Switch to input page
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('inputPage').style.display = 'block';
             
-            // Clear password field for security
             passwordInput.value = '';
             passwordInput.classList.remove('success', 'error');
             
-            // Focus on first input
             setTimeout(() => {
                 const busInput = document.getElementById('busInput');
                 if (kapasitasData[lokasiId].bus !== null) {
@@ -933,37 +733,12 @@
             }, 300);
             
             console.log(`✅ Petugas masuk untuk lokasi ${lokasiId}: ${lokasiData[lokasiId].nama}`);
-            
-            // Log login activity
-            logLoginActivity(lokasiId);
-        }
-
-        // ====== LOGIN ACTIVITY LOG ======
-        function logLoginActivity(lokasiId) {
-            try {
-                const logs = JSON.parse(localStorage.getItem('loginLogs') || '[]');
-                logs.push({
-                    lokasiId: lokasiId,
-                    lokasiNama: lokasiData[lokasiId].nama,
-                    timestamp: new Date().toISOString(),
-                    type: 'login'
-                });
-                
-                // Keep only last 50 logs
-                const trimmed = logs.slice(-50);
-                localStorage.setItem('loginLogs', JSON.stringify(trimmed));
-                
-                console.log(`📝 Log login untuk lokasi ${lokasiId}`);
-            } catch (error) {
-                console.error('Error logging login activity:', error);
-            }
         }
 
         // ====== UPDATE CAPACITY INFO ======
         function updateCapacityInfo(lokasiId) {
             const kapasitas = kapasitasData[lokasiId];
             
-            // Update max info display
             document.getElementById('busMaxInfo').textContent = 
                 kapasitas.bus !== null ? `Maks: ${kapasitas.bus}` : "Tidak tersedia";
             
@@ -973,7 +748,6 @@
             document.getElementById('motorMaxInfo').textContent = 
                 kapasitas.motor !== null ? `Maks: ${kapasitas.motor}` : "Tidak tersedia";
             
-            // Set max attributes and disable/enable inputs
             const busInput = document.getElementById('busInput');
             const mobilInput = document.getElementById('mobilInput');
             const motorInput = document.getElementById('motorInput');
@@ -982,7 +756,7 @@
                 busInput.max = kapasitas.bus;
                 busInput.disabled = false;
                 busInput.placeholder = `0-${kapasitas.bus}`;
-                busInput.value = 0; // Reset to 0
+                busInput.value = 0;
             } else {
                 busInput.disabled = true;
                 busInput.value = '';
@@ -993,7 +767,7 @@
                 mobilInput.max = kapasitas.mobil;
                 mobilInput.disabled = false;
                 mobilInput.placeholder = `0-${kapasitas.mobil}`;
-                mobilInput.value = 0; // Reset to 0
+                mobilInput.value = 0;
             } else {
                 mobilInput.disabled = true;
                 mobilInput.value = '';
@@ -1004,11 +778,62 @@
                 motorInput.max = kapasitas.motor;
                 motorInput.disabled = false;
                 motorInput.placeholder = `0-${kapasitas.motor}`;
-                motorInput.value = 0; // Reset to 0
+                motorInput.value = 0;
             } else {
                 motorInput.disabled = true;
                 motorInput.value = '';
                 motorInput.placeholder = "Tidak tersedia";
+            }
+        }
+
+        // ====== LOAD LAST DATA FROM GOOGLE SHEETS ======
+        async function loadLastData(lokasiId) {
+            try {
+                updateStatus('Memuat data terakhir...', '#3b82f6');
+                
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getData&lokasiId=${lokasiId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const lastData = data.data;
+                    const busInput = document.getElementById('busInput');
+                    const mobilInput = document.getElementById('mobilInput');
+                    const motorInput = document.getElementById('motorInput');
+                    
+                    if (!busInput.disabled && lastData.bus !== undefined) {
+                        busInput.value = lastData.bus || 0;
+                    }
+                    
+                    if (!mobilInput.disabled && lastData.mobil !== undefined) {
+                        mobilInput.value = lastData.mobil || 0;
+                    }
+                    
+                    if (!motorInput.disabled && lastData.motor !== undefined) {
+                        motorInput.value = lastData.motor || 0;
+                    }
+                    
+                    updateStatus(`Data terakhir ditemukan (${formatTime(lastData.timestamp)})`, '#10b981');
+                    
+                    setTimeout(() => {
+                        updateStatus('Siap menerima input', '');
+                    }, 3000);
+                } else {
+                    updateStatus('Tidak ada data sebelumnya', '#f59e0b');
+                    setTimeout(() => {
+                        updateStatus('Siap menerima input', '');
+                    }, 2000);
+                }
+            } catch (error) {
+                console.log('Tidak ada data sebelumnya atau error:', error);
+                updateStatus('Gagal memuat data terakhir', '#ef4444');
+                setTimeout(() => {
+                    updateStatus('Siap menerima input', '');
+                }, 2000);
             }
         }
 
@@ -1017,7 +842,7 @@
             const input = document.getElementById(inputId);
             
             if (input.disabled) {
-                return null; // Return null for disabled inputs
+                return null;
             }
             
             const value = parseInt(input.value) || 0;
@@ -1027,125 +852,39 @@
             }
             
             if (value > maxValue) {
-                // Show warning and auto-correct to max value
                 input.classList.add('warning');
                 setTimeout(() => {
                     input.classList.remove('warning');
                 }, 2000);
                 
-                // Auto-correct to max value
                 const correctedValue = maxValue;
                 input.value = correctedValue;
                 
-                // Show toast notification
                 showToast(`Diubah ke maksimum: ${correctedValue}`, 'warning');
                 
                 return correctedValue;
             }
             
-            // Remove any error/warning classes
             input.classList.remove('error', 'warning');
             return value;
         }
 
         // ====== LOGOUT FUNCTION ======
         function logout() {
-            // Save draft before logout
-            saveDraftData();
-            
-            // Reset to login page
             document.getElementById('inputPage').style.display = 'none';
             document.getElementById('loginPage').style.display = 'block';
             
-            // Reset form
             document.getElementById('lokasiLogin').value = '';
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordInput').classList.remove('success', 'error');
-            currentLokasi = null;
-            
-            // Reset login button
             document.getElementById('loginBtn').disabled = true;
+            currentLokasi = null;
             
             console.log('👋 Petugas logout');
         }
 
-        // ====== LOAD DRAFT DATA ======
-        function loadDraftData(lokasiId) {
-            try {
-                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
-                const draft = drafts[lokasiId];
-                const kapasitas = kapasitasData[lokasiId];
-                
-                if (draft) {
-                    // Set values with validation
-                    const busInput = document.getElementById('busInput');
-                    const mobilInput = document.getElementById('mobilInput');
-                    const motorInput = document.getElementById('motorInput');
-                    
-                    // Only load if input is enabled (capacity exists)
-                    if (!busInput.disabled && draft.bus !== undefined) {
-                        const busValue = Math.min(draft.bus || 0, kapasitas.bus || 0);
-                        busInput.value = busValue;
-                    }
-                    
-                    if (!mobilInput.disabled && draft.mobil !== undefined) {
-                        const mobilValue = Math.min(draft.mobil || 0, kapasitas.mobil || 0);
-                        mobilInput.value = mobilValue;
-                    }
-                    
-                    if (!motorInput.disabled && draft.motor !== undefined) {
-                        const motorValue = Math.min(draft.motor || 0, kapasitas.motor || 0);
-                        motorInput.value = motorValue;
-                    }
-                    
-                    updateStatus(`Data draft ditemukan (${formatTime(draft.timestamp)})`, '#f59e0b');
-                }
-            } catch (error) {
-                console.log('No draft data found');
-            }
-        }
-
-        // ====== SAVE DRAFT DATA ======
-        function saveDraftData() {
-            if (!currentLokasi) return;
-            
-            clearTimeout(inputTimer);
-            
-            inputTimer = setTimeout(() => {
-                const kapasitas = kapasitasData[currentLokasi];
-                
-                const draft = {
-                    bus: parseInt(document.getElementById('busInput').value) || 0,
-                    mobil: parseInt(document.getElementById('mobilInput').value) || 0,
-                    motor: parseInt(document.getElementById('motorInput').value) || 0,
-                    timestamp: new Date().toISOString()
-                };
-                
-                // Validate against max capacity
-                if (kapasitas.bus !== null && draft.bus > kapasitas.bus) {
-                    draft.bus = kapasitas.bus;
-                }
-                if (kapasitas.mobil !== null && draft.mobil > kapasitas.mobil) {
-                    draft.mobil = kapasitas.mobil;
-                }
-                if (kapasitas.motor !== null && draft.motor > kapasitas.motor) {
-                    draft.motor = kapasitas.motor;
-                }
-                
-                try {
-                    const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
-                    drafts[currentLokasi] = draft;
-                    localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
-                    
-                    console.log(`💾 Draft disimpan untuk lokasi ${currentLokasi}`);
-                } catch (error) {
-                    console.error('Error saving draft:', error);
-                }
-            }, 500);
-        }
-
-        // ====== SUBMIT DATA ======
-        function submitData() {
+        // ====== SUBMIT DATA TO GOOGLE SHEETS ======
+        async function submitData() {
             if (!currentLokasi) {
                 console.error('❌ Tidak ada lokasi yang dipilih');
                 return;
@@ -1153,12 +892,10 @@
             
             const kapasitas = kapasitasData[currentLokasi];
             
-            // Validate and auto-correct inputs
             const bus = validateInput('busInput', kapasitas.bus);
             const mobil = validateInput('mobilInput', kapasitas.mobil);
             const motor = validateInput('motorInput', kapasitas.motor);
             
-            // Check if all inputs are disabled (no capacity for this location)
             const busInput = document.getElementById('busInput');
             const mobilInput = document.getElementById('mobilInput');
             const motorInput = document.getElementById('motorInput');
@@ -1168,7 +905,6 @@
                 return;
             }
             
-            // Check if at least one valid input exists
             let hasValidInput = false;
             if (!busInput.disabled && bus !== null && bus > 0) hasValidInput = true;
             if (!mobilInput.disabled && mobil !== null && mobil > 0) hasValidInput = true;
@@ -1179,110 +915,69 @@
                 if (!confirmSubmit) return;
             }
             
-            // Prepare data
             const data = {
                 lokasiId: currentLokasi,
                 lokasiNama: lokasiData[currentLokasi].nama,
                 bus: bus !== null ? bus : 0,
                 mobil: mobil !== null ? mobil : 0,
                 motor: motor !== null ? motor : 0,
-                kapasitasMax: kapasitas, // Include max capacity for reference
                 timestamp: new Date().toISOString()
             };
             
-            console.log('📤 Data dikirim:', data);
+            console.log('📤 Mengirim data ke Google Sheets:', data);
             
-            // Update status
             updateStatus('Mengirim data...', '#f59e0b');
             
-            // Disable submit button temporarily
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span>⏳</span> MENGIRIM...';
             
-            // Simulate API call
-            setTimeout(() => {
-                try {
-                    // Save to storage
-                    saveToStorage(data);
-                    
-                    // Clear draft
-                    clearDraftData(currentLokasi);
-                    
-                    // Show success
-                    updateStatus('✅ Data berhasil dikirim!', '#10b981');
-                    
-                    // PERUBAHAN PENTING: TIDAK reset form
-                    // Nilai tetap dipertahankan seperti yang diinput (sudah divalidasi)
-                    
-                    // Re-enable submit button
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                    
-                    // Auto-reset status after 3 seconds
-                    setTimeout(() => {
-                        updateStatus('Siap menerima input', '');
-                    }, 3000);
-                    
-                    // Show confirmation message
-                    showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`, 'success');
-                    
-                    // Save as draft after submit
-                    setTimeout(() => {
-                        saveDraftData();
-                    }, 100);
-                    
-                } catch (error) {
-                    console.error('❌ Error submitting data:', error);
-                    updateStatus('❌ Gagal mengirim data', '#ef4444');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                    showToast('Gagal mengirim data', 'error');
-                }
-                
-            }, 1500);
-        }
-
-        // ====== STORAGE FUNCTIONS ======
-        function saveToStorage(data) {
             try {
-                const existing = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
-                
-                // Remove old data for this location
-                const filtered = existing.filter(item => item.lokasiId !== data.lokasiId);
-                
-                // Add new data
-                filtered.push({
-                    ...data,
-                    id: Date.now()
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'saveData',
+                        data: JSON.stringify(data)
+                    })
                 });
                 
-                // Keep only last 100 entries
-                const trimmed = filtered.slice(-100);
+                // Karena no-cors, kita tidak bisa membaca response
+                // Tapi kita anggap berhasil jika tidak ada error
                 
-                localStorage.setItem('parkirUpdates', JSON.stringify(trimmed));
+                updateStatus('✅ Data berhasil dikirim!', '#10b981');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
                 
-                // Trigger storage event for other tabs
-                localStorage.setItem('parkirUpdateTrigger', Date.now().toString());
+                showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`, 'success');
                 
-                console.log('💾 Data disimpan di localStorage:', data);
-                return true;
+                setTimeout(() => {
+                    updateStatus('Siap menerima input', '');
+                }, 3000);
                 
             } catch (error) {
-                console.error('Error saving data:', error);
-                return false;
-            }
-        }
-
-        function clearDraftData(lokasiId) {
-            try {
-                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
-                delete drafts[lokasiId];
-                localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
-                console.log(`🗑️ Draft untuk lokasi ${lokasiId} dihapus`);
-            } catch (error) {
-                console.error('Error clearing draft:', error);
+                console.error('❌ Error submitting data:', error);
+                updateStatus('❌ Gagal mengirim data', '#ef4444');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                showToast('Gagal mengirim data ke server', 'error');
+                
+                // Fallback: simpan ke localStorage sebagai backup
+                try {
+                    const existing = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
+                    existing.push({
+                        ...data,
+                        id: Date.now()
+                    });
+                    localStorage.setItem('parkirUpdates', JSON.stringify(existing.slice(-100)));
+                    console.log('💾 Data disimpan ke localStorage sebagai backup');
+                } catch (backupError) {
+                    console.error('Gagal menyimpan backup:', backupError);
+                }
             }
         }
 
@@ -1290,11 +985,7 @@
         function updateStatus(text, color = '') {
             const statusEl = document.getElementById('statusText');
             statusEl.textContent = text;
-            if (color) {
-                statusEl.style.color = color;
-            } else {
-                statusEl.style.color = '#64748b';
-            }
+            statusEl.style.color = color || '#64748b';
         }
 
         function updateTime() {
@@ -1313,16 +1004,13 @@
         }
 
         function showToast(message, type = 'success') {
-            // Remove existing toast
             const existing = document.querySelector('.custom-toast');
             if (existing) existing.remove();
             
-            // Set color based on type
-            let backgroundColor = '#10b981'; // success - green
-            if (type === 'warning') backgroundColor = '#f59e0b'; // warning - yellow
-            if (type === 'error') backgroundColor = '#ef4444'; // error - red
+            let backgroundColor = '#10b981';
+            if (type === 'warning') backgroundColor = '#f59e0b';
+            if (type === 'error') backgroundColor = '#ef4444';
             
-            // Create toast element
             const toast = document.createElement('div');
             toast.className = 'custom-toast';
             toast.style.cssText = `
@@ -1345,7 +1033,6 @@
             toast.textContent = message;
             document.body.appendChild(toast);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 toast.style.animation = 'slideDown 0.3s ease';
                 setTimeout(() => {
@@ -1356,29 +1043,15 @@
             }, 3000);
         }
 
-        // ====== DEBUG FUNCTION ======
-        function checkStorage() {
-            console.log('📦 Checking localStorage...');
-            const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
-            const updates = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
-            const logs = JSON.parse(localStorage.getItem('loginLogs') || '[]');
-            console.log('Drafts:', drafts);
-            console.log('Updates:', updates);
-            console.log('Login Logs:', logs);
-        }
-
         // ====== EVENT LISTENERS ======
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Aplikasi Petugas Parkir siap');
             
-            // Setup password auto-fill
             setupPasswordAutoFill();
             
-            // Auto-save draft on input change
             document.querySelectorAll('.number-input').forEach(input => {
                 input.addEventListener('input', function() {
                     if (currentLokasi && !this.disabled) {
-                        // Validate input in real-time
                         const kapasitas = kapasitasData[currentLokasi];
                         const value = parseInt(this.value) || 0;
                         
@@ -1394,34 +1067,20 @@
                         } else {
                             this.classList.remove('warning');
                         }
-                        
-                        saveDraftData();
-                        
-                        // Update status saat user menginput
-                        updateStatus('Menyimpan draft...', '#3b82f6');
-                        setTimeout(() => {
-                            updateStatus('Draft tersimpan', '#10b981');
-                            setTimeout(() => {
-                                updateStatus('Siap menerima input', '');
-                            }, 1500);
-                        }, 500);
                     }
                 });
                 
-                // Select semua teks saat focus untuk memudahkan edit
                 input.addEventListener('focus', function() {
                     if (!this.disabled) {
                         this.select();
                     }
                 });
                 
-                // Auto-correct on blur
                 input.addEventListener('blur', function() {
                     if (!this.disabled && currentLokasi) {
                         const kapasitas = kapasitasData[currentLokasi];
                         const value = parseInt(this.value) || 0;
                         
-                        // Auto-correct to max if exceeds
                         if (this.id === 'busInput' && kapasitas.bus !== null && value > kapasitas.bus) {
                             this.value = kapasitas.bus;
                             showToast(`Diubah ke maksimum: ${kapasitas.bus}`, 'warning');
@@ -1436,66 +1095,10 @@
                         this.classList.remove('warning');
                     }
                 });
-                
-                // Tambahkan tombol untuk increment/decrement di mobile
-                input.addEventListener('touchstart', function(e) {
-                    // Untuk mobile, beri sedikit delay sebelum select
-                    if (!this.disabled) {
-                        setTimeout(() => {
-                            this.select();
-                        }, 100);
-                    }
-                });
             });
             
-            // Update time every minute
             updateTime();
             setInterval(updateTime, 60000);
-            
-            // Check for existing session
-            const session = localStorage.getItem('currentSession');
-            if (session) {
-                try {
-                    const sessionData = JSON.parse(session);
-                    if (sessionData.lokasiId && lokasiData[sessionData.lokasiId]) {
-                        // Auto-login (but still need password)
-                        document.getElementById('lokasiLogin').value = sessionData.lokasiId;
-                        document.getElementById('passwordInput').value = sessionData.lokasiId;
-                        validatePassword();
-                    }
-                } catch (error) {
-                    // Invalid session
-                }
-            }
-            
-            // Debug: log storage on load
-            checkStorage();
-            
-            // Keyboard shortcuts for login page
-            const passwordInput = document.getElementById('passwordInput');
-            passwordInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !document.getElementById('loginBtn').disabled) {
-                    login();
-                }
-            });
-            
-            const lokasiSelect = document.getElementById('lokasiLogin');
-            lokasiSelect.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && this.value) {
-                    document.getElementById('passwordInput').focus();
-                }
-            });
-        });
-
-        // Save session on page hide
-        window.addEventListener('beforeunload', function() {
-            if (currentLokasi) {
-                saveDraftData();
-                localStorage.setItem('currentSession', JSON.stringify({
-                    lokasiId: currentLokasi,
-                    timestamp: new Date().toISOString()
-                }));
-            }
         });
 
         // Keyboard shortcuts
@@ -1515,24 +1118,11 @@
                 submitData();
             }
             
-            // Navigasi antara input dengan Tab
-            if (e.key === 'Tab' && document.getElementById('inputPage').style.display !== 'none') {
-                // Biarkan default behavior
-            }
-            
-            // Submit dengan Enter di input page
             if (e.key === 'Enter' && document.getElementById('inputPage').style.display !== 'none') {
-                // Cari input yang sedang aktif
                 const activeElement = document.activeElement;
                 if (activeElement.classList.contains('number-input')) {
                     submitData();
                 }
-            }
-            
-            // Debug shortcut: Ctrl+D untuk check storage
-            if (e.key === 'd' && e.ctrlKey) {
-                e.preventDefault();
-                checkStorage();
             }
         });
     </script>
