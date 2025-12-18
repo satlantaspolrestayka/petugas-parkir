@@ -341,6 +341,12 @@
             background-color: #fffbeb;
         }
         
+        .number-input:disabled {
+            background-color: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        
         .number-input::-webkit-outer-spin-button,
         .number-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -537,6 +543,11 @@
             .number-input.warning {
                 border-color: #d97706;
                 background-color: #451a03;
+            }
+            
+            .number-input:disabled {
+                background-color: #374151;
+                color: #9ca3af;
             }
             
             .capacity-info {
@@ -781,6 +792,7 @@
                 busInput.max = kapasitas.bus;
                 busInput.disabled = false;
                 busInput.placeholder = `0-${kapasitas.bus}`;
+                busInput.value = 0; // Reset to 0
             } else {
                 busInput.disabled = true;
                 busInput.value = '';
@@ -791,6 +803,7 @@
                 mobilInput.max = kapasitas.mobil;
                 mobilInput.disabled = false;
                 mobilInput.placeholder = `0-${kapasitas.mobil}`;
+                mobilInput.value = 0; // Reset to 0
             } else {
                 mobilInput.disabled = true;
                 mobilInput.value = '';
@@ -801,6 +814,7 @@
                 motorInput.max = kapasitas.motor;
                 motorInput.disabled = false;
                 motorInput.placeholder = `0-${kapasitas.motor}`;
+                motorInput.value = 0; // Reset to 0
             } else {
                 motorInput.disabled = true;
                 motorInput.value = '';
@@ -811,6 +825,11 @@
         // ====== VALIDATE INPUT ======
         function validateInput(inputId, maxValue) {
             const input = document.getElementById(inputId);
+            
+            if (input.disabled) {
+                return null; // Return null for disabled inputs
+            }
+            
             const value = parseInt(input.value) || 0;
             
             if (maxValue === null || maxValue === undefined) {
@@ -869,31 +888,22 @@
                     const motorInput = document.getElementById('motorInput');
                     
                     // Only load if input is enabled (capacity exists)
-                    if (!busInput.disabled) {
+                    if (!busInput.disabled && draft.bus !== undefined) {
                         const busValue = Math.min(draft.bus || 0, kapasitas.bus || 0);
                         busInput.value = busValue;
                     }
                     
-                    if (!mobilInput.disabled) {
+                    if (!mobilInput.disabled && draft.mobil !== undefined) {
                         const mobilValue = Math.min(draft.mobil || 0, kapasitas.mobil || 0);
                         mobilInput.value = mobilValue;
                     }
                     
-                    if (!motorInput.disabled) {
+                    if (!motorInput.disabled && draft.motor !== undefined) {
                         const motorValue = Math.min(draft.motor || 0, kapasitas.motor || 0);
                         motorInput.value = motorValue;
                     }
                     
                     updateStatus(`Data draft ditemukan (${formatTime(draft.timestamp)})`, '#f59e0b');
-                } else {
-                    // Set to 0 for enabled inputs
-                    const busInput = document.getElementById('busInput');
-                    const mobilInput = document.getElementById('mobilInput');
-                    const motorInput = document.getElementById('motorInput');
-                    
-                    if (!busInput.disabled) busInput.value = 0;
-                    if (!mobilInput.disabled) mobilInput.value = 0;
-                    if (!motorInput.disabled) motorInput.value = 0;
                 }
             } catch (error) {
                 console.log('No draft data found');
@@ -941,7 +951,10 @@
 
         // ====== SUBMIT DATA ======
         function submitData() {
-            if (!currentLokasi) return;
+            if (!currentLokasi) {
+                console.error('❌ Tidak ada lokasi yang dipilih');
+                return;
+            }
             
             const kapasitas = kapasitasData[currentLokasi];
             
@@ -962,22 +975,22 @@
             
             // Check if at least one valid input exists
             let hasValidInput = false;
-            if (!busInput.disabled && bus > 0) hasValidInput = true;
-            if (!mobilInput.disabled && mobil > 0) hasValidInput = true;
-            if (!motorInput.disabled && motor > 0) hasValidInput = true;
+            if (!busInput.disabled && bus !== null && bus > 0) hasValidInput = true;
+            if (!mobilInput.disabled && mobil !== null && mobil > 0) hasValidInput = true;
+            if (!motorInput.disabled && motor !== null && motor > 0) hasValidInput = true;
             
             if (!hasValidInput) {
                 const confirmSubmit = confirm("Semua input bernilai 0. Apakah Anda yakin ingin mengirim data?");
                 if (!confirmSubmit) return;
             }
             
-            // Prepare data
+            // Prepare data (FIX: Use correct variable name 'lokasiData' not 'lokasidata')
             const data = {
                 lokasiId: currentLokasi,
-                lokasiNama: lokasidata[currentLokasi].nama,
-                bus: bus,
-                mobil: mobil,
-                motor: motor,
+                lokasiNama: lokasiData[currentLokasi].nama, // FIXED HERE
+                bus: bus !== null ? bus : 0,
+                mobil: mobil !== null ? mobil : 0,
+                motor: motor !== null ? motor : 0,
                 kapasitasMax: kapasitas, // Include max capacity for reference
                 timestamp: new Date().toISOString()
             };
@@ -989,39 +1002,51 @@
             
             // Disable submit button temporarily
             const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>⏳</span> MENGIRIM...';
             
             // Simulate API call
             setTimeout(() => {
-                // Save to storage
-                saveToStorage(data);
+                try {
+                    // Save to storage
+                    saveToStorage(data);
+                    
+                    // Clear draft
+                    clearDraftData(currentLokasi);
+                    
+                    // Show success
+                    updateStatus('✅ Data berhasil dikirim!', '#10b981');
+                    
+                    // PERUBAHAN PENTING: TIDAK reset form
+                    // Nilai tetap dipertahankan seperti yang diinput (sudah divalidasi)
+                    
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    
+                    // Auto-reset status after 3 seconds
+                    setTimeout(() => {
+                        updateStatus('Siap menerima input', '');
+                    }, 3000);
+                    
+                    // Show confirmation message
+                    showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`, 'success');
+                    
+                    // Save as draft after submit
+                    setTimeout(() => {
+                        saveDraftData();
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('❌ Error submitting data:', error);
+                    updateStatus('❌ Gagal mengirim data', '#ef4444');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    showToast('Gagal mengirim data', 'error');
+                }
                 
-                // Clear draft
-                clearDraftData(currentLokasi);
-                
-                // Show success
-                updateStatus('✅ Data berhasil dikirim!', '#10b981');
-                
-                // PERUBAHAN PENTING: TIDAK reset form
-                // Nilai tetap dipertahankan seperti yang diinput (sudah divalidasi)
-                
-                // Re-enable submit button
-                submitBtn.disabled = false;
-                
-                // Auto-reset status after 3 seconds
-                setTimeout(() => {
-                    updateStatus('Siap menerima input', '');
-                }, 3000);
-                
-                // Show confirmation message
-                showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`);
-                
-                // Save as draft after submit
-                setTimeout(() => {
-                    saveDraftData();
-                }, 100);
-                
-            }, 1000);
+            }, 1500);
         }
 
         // ====== STORAGE FUNCTIONS ======
@@ -1046,10 +1071,12 @@
                 // Trigger storage event for other tabs
                 localStorage.setItem('parkirUpdateTrigger', Date.now().toString());
                 
-                console.log('💾 Data disimpan:', data);
+                console.log('💾 Data disimpan di localStorage:', data);
+                return true;
                 
             } catch (error) {
                 console.error('Error saving data:', error);
+                return false;
             }
         }
 
@@ -1058,6 +1085,7 @@
                 const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
                 delete drafts[lokasiId];
                 localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
+                console.log(`🗑️ Draft untuk lokasi ${lokasiId} dihapus`);
             } catch (error) {
                 console.error('Error clearing draft:', error);
             }
@@ -1131,6 +1159,15 @@
                     }
                 }, 300);
             }, 3000);
+        }
+
+        // ====== DEBUG FUNCTION ======
+        function checkStorage() {
+            console.log('📦 Checking localStorage...');
+            const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
+            const updates = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
+            console.log('Drafts:', drafts);
+            console.log('Updates:', updates);
         }
 
         // ====== EVENT LISTENERS ======
@@ -1229,6 +1266,9 @@
                     // Invalid session
                 }
             }
+            
+            // Debug: log storage on load
+            checkStorage();
         });
 
         // Save session on page hide
@@ -1269,6 +1309,12 @@
                 if (activeElement.classList.contains('number-input')) {
                     submitData();
                 }
+            }
+            
+            // Debug shortcut: Ctrl+D untuk check storage
+            if (e.key === 'd' && e.ctrlKey) {
+                e.preventDefault();
+                checkStorage();
             }
         });
     </script>
