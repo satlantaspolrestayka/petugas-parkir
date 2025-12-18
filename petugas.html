@@ -301,6 +301,13 @@
             letter-spacing: 1px;
         }
         
+        .capacity-info {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
         .number-input {
             width: 100%;
             padding: 15px;
@@ -314,17 +321,30 @@
             -webkit-appearance: none;
             -moz-appearance: textfield;
             font-family: 'Arial Black', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .number-input.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        .number-input.warning {
+            border-color: #f59e0b;
+            background-color: #fffbeb;
         }
         
         .number-input::-webkit-outer-spin-button,
         .number-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
-        }
-        
-        .number-input:focus {
-            outline: none;
-            border-color: #3498db;
         }
         
         /* ====== ACTION BUTTONS ====== */
@@ -352,6 +372,13 @@
             box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
         }
         
+        .btn-submit:disabled {
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+        
         .btn-logout {
             padding: 18px;
             border: 2px solid #e2e8f0;
@@ -368,7 +395,7 @@
             transition: all 0.3s ease;
         }
         
-        .btn-submit:active,
+        .btn-submit:active:not(:disabled),
         .btn-logout:active {
             transform: scale(0.98);
         }
@@ -497,6 +524,25 @@
                 color: #f8fafc;
             }
             
+            .number-input:focus {
+                background-color: #0c4a6e;
+                border-color: #38bdf8;
+            }
+            
+            .number-input.error {
+                border-color: #dc2626;
+                background-color: #450a0a;
+            }
+            
+            .number-input.warning {
+                border-color: #d97706;
+                background-color: #451a03;
+            }
+            
+            .capacity-info {
+                color: #cbd5e1;
+            }
+            
             .status-bar {
                 background: #334155;
                 border-top-color: #475569;
@@ -570,12 +616,12 @@
                 <div class="input-card">
                     <div class="card-icon">🚌</div>
                     <label class="card-label">BUS</label>
+                    <div class="capacity-info" id="busMaxInfo">Maks: -</div>
                     <input type="number" 
                            class="number-input" 
                            id="busInput"
                            value="0"
                            min="0"
-                           max="200"
                            placeholder="0"
                            inputmode="numeric">
                 </div>
@@ -584,12 +630,12 @@
                 <div class="input-card">
                     <div class="card-icon">🚗</div>
                     <label class="card-label">MOBIL</label>
+                    <div class="capacity-info" id="mobilMaxInfo">Maks: -</div>
                     <input type="number" 
                            class="number-input" 
                            id="mobilInput"
-                           value="80"
+                           value="0"
                            min="0"
-                           max="500"
                            placeholder="0"
                            inputmode="numeric">
                 </div>
@@ -598,12 +644,12 @@
                 <div class="input-card">
                     <div class="card-icon">🏍️</div>
                     <label class="card-label">MOTOR</label>
+                    <div class="capacity-info" id="motorMaxInfo">Maks: -</div>
                     <input type="number" 
                            class="number-input" 
                            id="motorInput"
-                           value="200"
+                           value="0"
                            min="0"
-                           max="1000"
                            placeholder="0"
                            inputmode="numeric">
                 </div>
@@ -613,7 +659,7 @@
                 <button class="btn-logout" onclick="logout()">
                     <span>←</span> GANTI LOKASI
                 </button>
-                <button class="btn-submit" onclick="submitData()">
+                <button class="btn-submit" id="submitBtn" onclick="submitData()">
                     <span>✓</span> KIRIM DATA
                 </button>
             </div>
@@ -626,6 +672,25 @@
     </div>
 
     <script>
+        // ====== DATA KAPASITAS MAKSIMAL DARI CSV ======
+        const kapasitasData = {
+            "1": { nama: "SENOPATI", alamat: "JL P. SENOPATI", bus: 62, mobil: 200, motor: null },
+            "2": { nama: "NGABEAN", alamat: "JL W. HASYIM", bus: 60, mobil: 80, motor: 100 },
+            "3": { nama: "SRI WEDANI", alamat: "JL SRI WEDANI", bus: null, mobil: 60, motor: 250 },
+            "4": { nama: "SPRAGA", alamat: "JL KHA DAHLAN", bus: 30, mobil: 50, motor: null },
+            "5": { nama: "RAMAI MALL", alamat: "JL BESKALAN", bus: null, mobil: 20, motor: 382 },
+            "6": { nama: "GRAND ZURI", alamat: "JL MARGO UTOMO", bus: 100, mobil: 50, motor: null },
+            "7": { nama: "EX MANOA CAFE", alamat: "JL ABU BAKAR ALI", bus: 20, mobil: 50, motor: null },
+            "8": { nama: "MALIOBORO II", alamat: "JL PABRINGAN", bus: null, mobil: 115, motor: 250 },
+            "9": { nama: "MALIOBORO III", alamat: "JL KETANDAN 7", bus: null, mobil: 125, motor: null },
+            "10": { nama: "UTARA CAVINTON", alamat: "JL LETJEND SUPRAPTO", bus: 40, mobil: 150, motor: null },
+            "11": { nama: "GEMBIRA LOKA", alamat: "JL KEBUN RAYA", bus: 82, mobil: 100, motor: 300 },
+            "12": { nama: "KAWULA ALIT", alamat: "JL GANDEKAN", bus: null, mobil: 100, motor: 200 },
+            "13": { nama: "PARKIRAN KOMANDO", alamat: "JL SUDIRMAN", bus: null, mobil: 60, motor: 200 },
+            "14": { nama: "EKS TRIO", alamat: "JL MARGOUTOMO", bus: 130, mobil: 300, motor: null },
+            "15": { nama: "STADION KRIDOSONO", alamat: "JL YOS SUDARSO", bus: null, mobil: null, motor: null }
+        };
+
         // ====== DATA LOKASI ======
         const lokasiData = {
             "1": { nama: "SENOPATI", alamat: "JL P. SENOPATI" },
@@ -668,6 +733,9 @@
             document.getElementById('lokasiNama').textContent = lokasiData[lokasiId].nama;
             document.getElementById('lokasiAlamat').textContent = lokasiData[lokasiId].alamat;
             
+            // Update max capacity info
+            updateCapacityInfo(lokasiId);
+            
             // Load draft data if exists
             loadDraftData(lokasiId);
             
@@ -677,10 +745,98 @@
             
             // Focus on first input
             setTimeout(() => {
-                document.getElementById('busInput').focus();
+                const busInput = document.getElementById('busInput');
+                if (kapasitasData[lokasiId].bus !== null) {
+                    busInput.focus();
+                } else if (kapasitasData[lokasiId].mobil !== null) {
+                    document.getElementById('mobilInput').focus();
+                } else if (kapasitasData[lokasiId].motor !== null) {
+                    document.getElementById('motorInput').focus();
+                }
             }, 300);
             
             console.log(`✅ Petugas masuk untuk lokasi: ${lokasiData[lokasiId].nama}`);
+        }
+
+        // ====== UPDATE CAPACITY INFO ======
+        function updateCapacityInfo(lokasiId) {
+            const kapasitas = kapasitasData[lokasiId];
+            
+            // Update max info display
+            document.getElementById('busMaxInfo').textContent = 
+                kapasitas.bus !== null ? `Maks: ${kapasitas.bus}` : "Tidak tersedia";
+            
+            document.getElementById('mobilMaxInfo').textContent = 
+                kapasitas.mobil !== null ? `Maks: ${kapasitas.mobil}` : "Tidak tersedia";
+            
+            document.getElementById('motorMaxInfo').textContent = 
+                kapasitas.motor !== null ? `Maks: ${kapasitas.motor}` : "Tidak tersedia";
+            
+            // Set max attributes and disable/enable inputs
+            const busInput = document.getElementById('busInput');
+            const mobilInput = document.getElementById('mobilInput');
+            const motorInput = document.getElementById('motorInput');
+            
+            if (kapasitas.bus !== null) {
+                busInput.max = kapasitas.bus;
+                busInput.disabled = false;
+                busInput.placeholder = `0-${kapasitas.bus}`;
+            } else {
+                busInput.disabled = true;
+                busInput.value = '';
+                busInput.placeholder = "Tidak tersedia";
+            }
+            
+            if (kapasitas.mobil !== null) {
+                mobilInput.max = kapasitas.mobil;
+                mobilInput.disabled = false;
+                mobilInput.placeholder = `0-${kapasitas.mobil}`;
+            } else {
+                mobilInput.disabled = true;
+                mobilInput.value = '';
+                mobilInput.placeholder = "Tidak tersedia";
+            }
+            
+            if (kapasitas.motor !== null) {
+                motorInput.max = kapasitas.motor;
+                motorInput.disabled = false;
+                motorInput.placeholder = `0-${kapasitas.motor}`;
+            } else {
+                motorInput.disabled = true;
+                motorInput.value = '';
+                motorInput.placeholder = "Tidak tersedia";
+            }
+        }
+
+        // ====== VALIDATE INPUT ======
+        function validateInput(inputId, maxValue) {
+            const input = document.getElementById(inputId);
+            const value = parseInt(input.value) || 0;
+            
+            if (maxValue === null || maxValue === undefined) {
+                return 0;
+            }
+            
+            if (value > maxValue) {
+                // Show warning and auto-correct to max value
+                input.classList.add('warning');
+                setTimeout(() => {
+                    input.classList.remove('warning');
+                }, 2000);
+                
+                // Auto-correct to max value
+                const correctedValue = maxValue;
+                input.value = correctedValue;
+                
+                // Show toast notification
+                showToast(`Diubah ke maksimum: ${correctedValue}`, 'warning');
+                
+                return correctedValue;
+            }
+            
+            // Remove any error/warning classes
+            input.classList.remove('error', 'warning');
+            return value;
         }
 
         // ====== LOGOUT FUNCTION ======
@@ -704,13 +860,40 @@
             try {
                 const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
                 const draft = drafts[lokasiId];
+                const kapasitas = kapasitasData[lokasiId];
                 
                 if (draft) {
-                    document.getElementById('busInput').value = draft.bus || 0;
-                    document.getElementById('mobilInput').value = draft.mobil || 0;
-                    document.getElementById('motorInput').value = draft.motor || 0;
+                    // Set values with validation
+                    const busInput = document.getElementById('busInput');
+                    const mobilInput = document.getElementById('mobilInput');
+                    const motorInput = document.getElementById('motorInput');
+                    
+                    // Only load if input is enabled (capacity exists)
+                    if (!busInput.disabled) {
+                        const busValue = Math.min(draft.bus || 0, kapasitas.bus || 0);
+                        busInput.value = busValue;
+                    }
+                    
+                    if (!mobilInput.disabled) {
+                        const mobilValue = Math.min(draft.mobil || 0, kapasitas.mobil || 0);
+                        mobilInput.value = mobilValue;
+                    }
+                    
+                    if (!motorInput.disabled) {
+                        const motorValue = Math.min(draft.motor || 0, kapasitas.motor || 0);
+                        motorInput.value = motorValue;
+                    }
                     
                     updateStatus(`Data draft ditemukan (${formatTime(draft.timestamp)})`, '#f59e0b');
+                } else {
+                    // Set to 0 for enabled inputs
+                    const busInput = document.getElementById('busInput');
+                    const mobilInput = document.getElementById('mobilInput');
+                    const motorInput = document.getElementById('motorInput');
+                    
+                    if (!busInput.disabled) busInput.value = 0;
+                    if (!mobilInput.disabled) mobilInput.value = 0;
+                    if (!motorInput.disabled) motorInput.value = 0;
                 }
             } catch (error) {
                 console.log('No draft data found');
@@ -724,12 +907,25 @@
             clearTimeout(inputTimer);
             
             inputTimer = setTimeout(() => {
+                const kapasitas = kapasitasData[currentLokasi];
+                
                 const draft = {
                     bus: parseInt(document.getElementById('busInput').value) || 0,
                     mobil: parseInt(document.getElementById('mobilInput').value) || 0,
                     motor: parseInt(document.getElementById('motorInput').value) || 0,
                     timestamp: new Date().toISOString()
                 };
+                
+                // Validate against max capacity
+                if (kapasitas.bus !== null && draft.bus > kapasitas.bus) {
+                    draft.bus = kapasitas.bus;
+                }
+                if (kapasitas.mobil !== null && draft.mobil > kapasitas.mobil) {
+                    draft.mobil = kapasitas.mobil;
+                }
+                if (kapasitas.motor !== null && draft.motor > kapasitas.motor) {
+                    draft.motor = kapasitas.motor;
+                }
                 
                 try {
                     const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
@@ -747,23 +943,42 @@
         function submitData() {
             if (!currentLokasi) return;
             
-            const bus = parseInt(document.getElementById('busInput').value) || 0;
-            const mobil = parseInt(document.getElementById('mobilInput').value) || 0;
-            const motor = parseInt(document.getElementById('motorInput').value) || 0;
+            const kapasitas = kapasitasData[currentLokasi];
             
-            // Validate
-            if (bus < 0 || mobil < 0 || motor < 0) {
-                alert("Angka tidak boleh negatif");
+            // Validate and auto-correct inputs
+            const bus = validateInput('busInput', kapasitas.bus);
+            const mobil = validateInput('mobilInput', kapasitas.mobil);
+            const motor = validateInput('motorInput', kapasitas.motor);
+            
+            // Check if all inputs are disabled (no capacity for this location)
+            const busInput = document.getElementById('busInput');
+            const mobilInput = document.getElementById('mobilInput');
+            const motorInput = document.getElementById('motorInput');
+            
+            if (busInput.disabled && mobilInput.disabled && motorInput.disabled) {
+                alert("Lokasi ini tidak memiliki kapasitas parkir yang tercatat");
                 return;
+            }
+            
+            // Check if at least one valid input exists
+            let hasValidInput = false;
+            if (!busInput.disabled && bus > 0) hasValidInput = true;
+            if (!mobilInput.disabled && mobil > 0) hasValidInput = true;
+            if (!motorInput.disabled && motor > 0) hasValidInput = true;
+            
+            if (!hasValidInput) {
+                const confirmSubmit = confirm("Semua input bernilai 0. Apakah Anda yakin ingin mengirim data?");
+                if (!confirmSubmit) return;
             }
             
             // Prepare data
             const data = {
                 lokasiId: currentLokasi,
-                lokasiNama: lokasiData[currentLokasi].nama,
+                lokasiNama: lokasidata[currentLokasi].nama,
                 bus: bus,
                 mobil: mobil,
                 motor: motor,
+                kapasitasMax: kapasitas, // Include max capacity for reference
                 timestamp: new Date().toISOString()
             };
             
@@ -772,9 +987,13 @@
             // Update status
             updateStatus('Mengirim data...', '#f59e0b');
             
+            // Disable submit button temporarily
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            
             // Simulate API call
             setTimeout(() => {
-                // Save to localStorage
+                // Save to storage
                 saveToStorage(data);
                 
                 // Clear draft
@@ -783,10 +1002,11 @@
                 // Show success
                 updateStatus('✅ Data berhasil dikirim!', '#10b981');
                 
-                // Reset form
-                document.getElementById('busInput').value = 0;
-                document.getElementById('mobilInput').value = 0;
-                document.getElementById('motorInput').value = 0;
+                // PERUBAHAN PENTING: TIDAK reset form
+                // Nilai tetap dipertahankan seperti yang diinput (sudah divalidasi)
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
                 
                 // Auto-reset status after 3 seconds
                 setTimeout(() => {
@@ -795,6 +1015,11 @@
                 
                 // Show confirmation message
                 showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`);
+                
+                // Save as draft after submit
+                setTimeout(() => {
+                    saveDraftData();
+                }, 100);
                 
             }, 1000);
         }
@@ -845,7 +1070,7 @@
             if (color) {
                 statusEl.style.color = color;
             } else {
-                statusEl.style.color = '';
+                statusEl.style.color = '#64748b';
             }
         }
 
@@ -864,10 +1089,15 @@
             return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         }
 
-        function showToast(message) {
+        function showToast(message, type = 'success') {
             // Remove existing toast
             const existing = document.querySelector('.custom-toast');
             if (existing) existing.remove();
+            
+            // Set color based on type
+            let backgroundColor = '#10b981'; // success - green
+            if (type === 'warning') backgroundColor = '#f59e0b'; // warning - yellow
+            if (type === 'error') backgroundColor = '#ef4444'; // error - red
             
             // Create toast element
             const toast = document.createElement('div');
@@ -877,7 +1107,7 @@
                 bottom: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: #10b981;
+                background: ${backgroundColor};
                 color: white;
                 padding: 12px 24px;
                 border-radius: 10px;
@@ -886,6 +1116,8 @@
                 animation: slideUp 0.3s ease;
                 font-size: 14px;
                 font-weight: 500;
+                max-width: 90%;
+                text-align: center;
             `;
             toast.textContent = message;
             document.body.appendChild(toast);
@@ -908,8 +1140,73 @@
             // Auto-save draft on input change
             document.querySelectorAll('.number-input').forEach(input => {
                 input.addEventListener('input', function() {
-                    if (currentLokasi) {
+                    if (currentLokasi && !this.disabled) {
+                        // Validate input in real-time
+                        const kapasitas = kapasitasData[currentLokasi];
+                        const value = parseInt(this.value) || 0;
+                        
+                        if (this.id === 'busInput' && kapasitas.bus !== null && value > kapasitas.bus) {
+                            this.classList.add('warning');
+                            showToast(`Maksimum bus: ${kapasitas.bus}`, 'warning');
+                        } else if (this.id === 'mobilInput' && kapasitas.mobil !== null && value > kapasitas.mobil) {
+                            this.classList.add('warning');
+                            showToast(`Maksimum mobil: ${kapasitas.mobil}`, 'warning');
+                        } else if (this.id === 'motorInput' && kapasitas.motor !== null && value > kapasitas.motor) {
+                            this.classList.add('warning');
+                            showToast(`Maksimum motor: ${kapasitas.motor}`, 'warning');
+                        } else {
+                            this.classList.remove('warning');
+                        }
+                        
                         saveDraftData();
+                        
+                        // Update status saat user menginput
+                        updateStatus('Menyimpan draft...', '#3b82f6');
+                        setTimeout(() => {
+                            updateStatus('Draft tersimpan', '#10b981');
+                            setTimeout(() => {
+                                updateStatus('Siap menerima input', '');
+                            }, 1500);
+                        }, 500);
+                    }
+                });
+                
+                // Select semua teks saat focus untuk memudahkan edit
+                input.addEventListener('focus', function() {
+                    if (!this.disabled) {
+                        this.select();
+                    }
+                });
+                
+                // Auto-correct on blur
+                input.addEventListener('blur', function() {
+                    if (!this.disabled && currentLokasi) {
+                        const kapasitas = kapasitasData[currentLokasi];
+                        const value = parseInt(this.value) || 0;
+                        
+                        // Auto-correct to max if exceeds
+                        if (this.id === 'busInput' && kapasitas.bus !== null && value > kapasitas.bus) {
+                            this.value = kapasitas.bus;
+                            showToast(`Diubah ke maksimum: ${kapasitas.bus}`, 'warning');
+                        } else if (this.id === 'mobilInput' && kapasitas.mobil !== null && value > kapasitas.mobil) {
+                            this.value = kapasitas.mobil;
+                            showToast(`Diubah ke maksimum: ${kapasitas.mobil}`, 'warning');
+                        } else if (this.id === 'motorInput' && kapasitas.motor !== null && value > kapasitas.motor) {
+                            this.value = kapasitas.motor;
+                            showToast(`Diubah ke maksimum: ${kapasitas.motor}`, 'warning');
+                        }
+                        
+                        this.classList.remove('warning');
+                    }
+                });
+                
+                // Tambahkan tombol untuk increment/decrement di mobile
+                input.addEventListener('touchstart', function(e) {
+                    // Untuk mobile, beri sedikit delay sebelum select
+                    if (!this.disabled) {
+                        setTimeout(() => {
+                            this.select();
+                        }, 100);
                     }
                 });
             });
@@ -958,6 +1255,20 @@
             if (e.key === 's' && e.ctrlKey && document.getElementById('inputPage').style.display !== 'none') {
                 e.preventDefault();
                 submitData();
+            }
+            
+            // Navigasi antara input dengan Tab
+            if (e.key === 'Tab' && document.getElementById('inputPage').style.display !== 'none') {
+                // Biarkan default behavior
+            }
+            
+            // Submit dengan Enter di input page
+            if (e.key === 'Enter' && document.getElementById('inputPage').style.display !== 'none') {
+                // Cari input yang sedang aktif
+                const activeElement = document.activeElement;
+                if (activeElement.classList.contains('number-input')) {
+                    submitData();
+                }
             }
         });
     </script>
