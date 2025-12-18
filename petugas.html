@@ -117,7 +117,7 @@
         }
         
         .form-group {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .form-label {
@@ -134,6 +134,21 @@
         .form-label::before {
             content: '📍';
             font-size: 20px;
+        }
+        
+        .form-label.password::before {
+            content: '🔒';
+        }
+        
+        .password-info {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
         }
         
         .lokasi-select {
@@ -159,6 +174,37 @@
             outline: none;
             border-color: #3498db;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            font-family: monospace;
+            letter-spacing: 2px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .password-input.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        .password-input.success {
+            border-color: #10b981;
+            background-color: #f0fdf4;
         }
         
         .login-btn {
@@ -199,6 +245,13 @@
         .login-btn:active {
             transform: scale(0.98);
             box-shadow: 0 2px 10px rgba(46, 204, 113, 0.4);
+        }
+        
+        .login-btn:disabled {
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
         }
         
         /* ====== INPUT PAGE (HIDDEN INITIALLY) ====== */
@@ -475,6 +528,11 @@
                 font-size: 28px;
                 padding: 12px;
             }
+            
+            .password-input {
+                padding: 15px;
+                font-size: 18px;
+            }
         }
         
         /* Landscape Mode */
@@ -519,6 +577,22 @@
                 background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             }
             
+            .password-input {
+                background-color: #334155;
+                border-color: #475569;
+                color: #e2e8f0;
+            }
+            
+            .password-input.error {
+                border-color: #dc2626;
+                background-color: #450a0a;
+            }
+            
+            .password-input.success {
+                border-color: #10b981;
+                background-color: #064e3b;
+            }
+            
             .input-card {
                 background: #334155;
                 border-color: #475569;
@@ -552,6 +626,12 @@
             
             .capacity-info {
                 color: #cbd5e1;
+            }
+            
+            .password-info {
+                background: #334155;
+                color: #cbd5e1;
+                border-left-color: #38bdf8;
             }
             
             .status-bar {
@@ -601,7 +681,21 @@
                 </select>
             </div>
             
-            <button class="login-btn" onclick="login()">
+            <div class="form-group">
+                <label class="form-label password">PASSWORD LOKASI</label>
+                <div class="password-info">
+                    ⓘ Password sesuai dengan nomor urut lokasi yang dipilih
+                </div>
+                <input type="password" 
+                       class="password-input" 
+                       id="passwordInput"
+                       placeholder="Masukkan password angka"
+                       maxlength="2"
+                       inputmode="numeric"
+                       oninput="validatePassword()">
+            </div>
+            
+            <button class="login-btn" id="loginBtn" onclick="login()">
                 <span>→</span> MASUK KE APLIKASI
             </button>
         </div>
@@ -725,14 +819,82 @@
         let currentLokasi = null;
         let inputTimer = null;
 
+        // ====== PASSWORD VALIDATION ======
+        function validatePassword() {
+            const lokasiSelect = document.getElementById('lokasiLogin');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            const selectedLokasi = lokasiSelect.value;
+            const enteredPassword = passwordInput.value.trim();
+            
+            // Reset styles
+            passwordInput.classList.remove('error', 'success');
+            loginBtn.disabled = true;
+            
+            if (!selectedLokasi) {
+                passwordInput.classList.add('error');
+                return false;
+            }
+            
+            // Expected password is the location number (e.g., "1" for SENOPATI)
+            const expectedPassword = selectedLokasi;
+            
+            if (enteredPassword === expectedPassword) {
+                passwordInput.classList.add('success');
+                loginBtn.disabled = false;
+                return true;
+            } else if (enteredPassword.length > 0) {
+                passwordInput.classList.add('error');
+                return false;
+            }
+            
+            return false;
+        }
+
+        // ====== AUTO-FILL PASSWORD ON LOCATION SELECT ======
+        function setupPasswordAutoFill() {
+            const lokasiSelect = document.getElementById('lokasiLogin');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            lokasiSelect.addEventListener('change', function() {
+                if (this.value) {
+                    // Auto-fill password with location number
+                    passwordInput.value = this.value;
+                    validatePassword();
+                    passwordInput.focus();
+                    passwordInput.select();
+                } else {
+                    passwordInput.value = '';
+                    passwordInput.classList.remove('error', 'success');
+                }
+            });
+            
+            // Also validate when password is typed
+            passwordInput.addEventListener('input', validatePassword);
+        }
+
         // ====== LOGIN FUNCTION ======
         function login() {
             const select = document.getElementById('lokasiLogin');
+            const passwordInput = document.getElementById('passwordInput');
             const lokasiId = select.value;
+            const password = passwordInput.value.trim();
             
+            // Validate location selection
             if (!lokasiId) {
                 alert("Silakan pilih lokasi parkir Anda terlebih dahulu");
                 select.focus();
+                return;
+            }
+            
+            // Validate password
+            const expectedPassword = lokasiId;
+            if (password !== expectedPassword) {
+                alert("Password salah! Password harus sesuai dengan nomor urut lokasi.\n\nContoh: Lokasi 1 → Password: 1\nLokasi 8 → Password: 8");
+                passwordInput.classList.add('error');
+                passwordInput.focus();
+                passwordInput.select();
                 return;
             }
             
@@ -754,6 +916,10 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('inputPage').style.display = 'block';
             
+            // Clear password field for security
+            passwordInput.value = '';
+            passwordInput.classList.remove('success', 'error');
+            
             // Focus on first input
             setTimeout(() => {
                 const busInput = document.getElementById('busInput');
@@ -766,7 +932,31 @@
                 }
             }, 300);
             
-            console.log(`✅ Petugas masuk untuk lokasi: ${lokasiData[lokasiId].nama}`);
+            console.log(`✅ Petugas masuk untuk lokasi ${lokasiId}: ${lokasiData[lokasiId].nama}`);
+            
+            // Log login activity
+            logLoginActivity(lokasiId);
+        }
+
+        // ====== LOGIN ACTIVITY LOG ======
+        function logLoginActivity(lokasiId) {
+            try {
+                const logs = JSON.parse(localStorage.getItem('loginLogs') || '[]');
+                logs.push({
+                    lokasiId: lokasiId,
+                    lokasiNama: lokasiData[lokasiId].nama,
+                    timestamp: new Date().toISOString(),
+                    type: 'login'
+                });
+                
+                // Keep only last 50 logs
+                const trimmed = logs.slice(-50);
+                localStorage.setItem('loginLogs', JSON.stringify(trimmed));
+                
+                console.log(`📝 Log login untuk lokasi ${lokasiId}`);
+            } catch (error) {
+                console.error('Error logging login activity:', error);
+            }
         }
 
         // ====== UPDATE CAPACITY INFO ======
@@ -869,7 +1059,12 @@
             
             // Reset form
             document.getElementById('lokasiLogin').value = '';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').classList.remove('success', 'error');
             currentLokasi = null;
+            
+            // Reset login button
+            document.getElementById('loginBtn').disabled = true;
             
             console.log('👋 Petugas logout');
         }
@@ -984,10 +1179,10 @@
                 if (!confirmSubmit) return;
             }
             
-            // Prepare data (FIX: Use correct variable name 'lokasiData' not 'lokasidata')
+            // Prepare data
             const data = {
                 lokasiId: currentLokasi,
-                lokasiNama: lokasiData[currentLokasi].nama, // FIXED HERE
+                lokasiNama: lokasiData[currentLokasi].nama,
                 bus: bus !== null ? bus : 0,
                 mobil: mobil !== null ? mobil : 0,
                 motor: motor !== null ? motor : 0,
@@ -1166,13 +1361,18 @@
             console.log('📦 Checking localStorage...');
             const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
             const updates = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
+            const logs = JSON.parse(localStorage.getItem('loginLogs') || '[]');
             console.log('Drafts:', drafts);
             console.log('Updates:', updates);
+            console.log('Login Logs:', logs);
         }
 
         // ====== EVENT LISTENERS ======
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Aplikasi Petugas Parkir siap');
+            
+            // Setup password auto-fill
+            setupPasswordAutoFill();
             
             // Auto-save draft on input change
             document.querySelectorAll('.number-input').forEach(input => {
@@ -1258,9 +1458,10 @@
                 try {
                     const sessionData = JSON.parse(session);
                     if (sessionData.lokasiId && lokasiData[sessionData.lokasiId]) {
-                        // Auto-login
+                        // Auto-login (but still need password)
                         document.getElementById('lokasiLogin').value = sessionData.lokasiId;
-                        login();
+                        document.getElementById('passwordInput').value = sessionData.lokasiId;
+                        validatePassword();
                     }
                 } catch (error) {
                     // Invalid session
@@ -1269,6 +1470,21 @@
             
             // Debug: log storage on load
             checkStorage();
+            
+            // Keyboard shortcuts for login page
+            const passwordInput = document.getElementById('passwordInput');
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !document.getElementById('loginBtn').disabled) {
+                    login();
+                }
+            });
+            
+            const lokasiSelect = document.getElementById('lokasiLogin');
+            lokasiSelect.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && this.value) {
+                    document.getElementById('passwordInput').focus();
+                }
+            });
         });
 
         // Save session on page hide
@@ -1285,7 +1501,9 @@
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && document.getElementById('loginPage').style.display !== 'none') {
-                login();
+                if (!document.getElementById('loginBtn').disabled) {
+                    login();
+                }
             }
             
             if (e.key === 'Escape' && document.getElementById('inputPage').style.display !== 'none') {
