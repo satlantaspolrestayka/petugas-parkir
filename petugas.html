@@ -647,7 +647,7 @@
 
         // ====== VARIABLES ======
         let currentLokasi = null;
-        let draftData = {};
+        let inputTimer = null;
 
         // ====== LOGIN FUNCTION ======
         function login() {
@@ -721,22 +721,26 @@
         function saveDraftData() {
             if (!currentLokasi) return;
             
-            const draft = {
-                bus: parseInt(document.getElementById('busInput').value) || 0,
-                mobil: parseInt(document.getElementById('mobilInput').value) || 0,
-                motor: parseInt(document.getElementById('motorInput').value) || 0,
-                timestamp: new Date().toISOString()
-            };
+            clearTimeout(inputTimer);
             
-            try {
-                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
-                drafts[currentLokasi] = draft;
-                localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
+            inputTimer = setTimeout(() => {
+                const draft = {
+                    bus: parseInt(document.getElementById('busInput').value) || 0,
+                    mobil: parseInt(document.getElementById('mobilInput').value) || 0,
+                    motor: parseInt(document.getElementById('motorInput').value) || 0,
+                    timestamp: new Date().toISOString()
+                };
                 
-                console.log(`💾 Draft disimpan untuk lokasi ${currentLokasi}`);
-            } catch (error) {
-                console.error('Error saving draft:', error);
-            }
+                try {
+                    const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
+                    drafts[currentLokasi] = draft;
+                    localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
+                    
+                    console.log(`💾 Draft disimpan untuk lokasi ${currentLokasi}`);
+                } catch (error) {
+                    console.error('Error saving draft:', error);
+                }
+            }, 500);
         }
 
         // ====== SUBMIT DATA ======
@@ -792,24 +796,30 @@
                 // Show confirmation message
                 showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`);
                 
-            }, 1500);
+            }, 1000);
         }
 
         // ====== STORAGE FUNCTIONS ======
         function saveToStorage(data) {
             try {
                 const existing = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
-                existing.push({
+                
+                // Remove old data for this location
+                const filtered = existing.filter(item => item.lokasiId !== data.lokasiId);
+                
+                // Add new data
+                filtered.push({
                     ...data,
                     id: Date.now()
                 });
                 
                 // Keep only last 100 entries
-                if (existing.length > 100) {
-                    existing.splice(0, existing.length - 100);
-                }
+                const trimmed = filtered.slice(-100);
                 
-                localStorage.setItem('parkirUpdates', JSON.stringify(existing));
+                localStorage.setItem('parkirUpdates', JSON.stringify(trimmed));
+                
+                // Trigger storage event for other tabs
+                localStorage.setItem('parkirUpdateTrigger', Date.now().toString());
                 
                 console.log('💾 Data disimpan:', data);
                 
@@ -855,8 +865,13 @@
         }
 
         function showToast(message) {
+            // Remove existing toast
+            const existing = document.querySelector('.custom-toast');
+            if (existing) existing.remove();
+            
             // Create toast element
             const toast = document.createElement('div');
+            toast.className = 'custom-toast';
             toast.style.cssText = `
                 position: fixed;
                 bottom: 20px;
@@ -864,11 +879,13 @@
                 transform: translateX(-50%);
                 background: #10b981;
                 color: white;
-                padding: 15px 25px;
+                padding: 12px 24px;
                 border-radius: 10px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.2);
                 z-index: 1000;
                 animation: slideUp 0.3s ease;
+                font-size: 14px;
+                font-weight: 500;
             `;
             toast.textContent = message;
             document.body.appendChild(toast);
@@ -876,7 +893,11 @@
             // Remove after 3 seconds
             setTimeout(() => {
                 toast.style.animation = 'slideDown 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
             }, 3000);
         }
 
