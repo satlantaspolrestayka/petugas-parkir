@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    
+    <title>Login Petugas Parkir</title>
+    
+    <style>
+        /* ====== UNIVERSAL RESET ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        html {
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        /* ====== LOGIN PAGE ====== */
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-30px, -30px) rotate(360deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .login-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .login-subtitle {
+            opacity: 0.9;
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        /* ====== LOGIN FORM ====== */
+        .login-form {
+            padding: 40px 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label::before {
+            content: '📍';
+            font-size: 20px;
+        }
+        
+        .lokasi-select {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            background: white;
+            color: #333;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 20px;
+            padding-right: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .lokasi-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(46, 204, 113, 0.4);
+        }
+        
+        /* ====== INPUT PAGE (HIDDEN INITIALLY) ====== */
+        .input-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .input-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .lokasi-info {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .lokasi-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .lokasi-nama {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .lokasi-alamat {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        /* ====== INPUT FORM ====== */
+        .input-form {
+            padding: 30px;
+        }
+        
+        .input-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .kapasitas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .input-card:focus-within {
+            border-color: #3498db;
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .card-label {
+            display: block;
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .number-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 32px;
+            font-weight: 800;
+            text-align: center;
+            color: #2c3e50;
+            background: white;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        .number-input::-webkit-outer-spin-button,
+        .number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        /* ====== ACTION BUTTONS ====== */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn-submit {
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-logout {
+            padding: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            background: white;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:active,
+        .btn-logout:active {
+            transform: scale(0.98);
+        }
+        
+        /* ====== STATUS BAR ====== */
+        .status-bar {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .status-text {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .status-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 768px) {
+            .login-container,
+            .input-container {
+                border-radius: 20px;
+            }
+            
+            .login-header,
+            .input-header {
+                padding: 30px 20px;
+            }
+            
+            .login-title {
+                font-size: 24px;
+            }
+            
+            .login-form,
+            .input-form {
+                padding: 30px 20px;
+            }
+            
+            .kapasitas-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .login-title {
+                font-size: 22px;
+            }
+            
+            .lokasi-nama {
+                font-size: 20px;
+            }
+            
+            .number-input {
+                font-size: 28px;
+                padding: 12px;
+            }
+        }
+        
+        /* Landscape Mode */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .login-container,
+            .input-container {
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+            
+            .login-header,
+            .input-header {
+                padding: 20px;
+            }
+            
+            .kapasitas-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #0f172a, #1e293b);
+            }
+            
+            .login-container,
+            .input-container {
+                background: #1e293b;
+                color: #e2e8f0;
+            }
+            
+            .login-header,
+            .input-header {
+                background: linear-gradient(135deg, #0f172a, #334155);
+            }
+            
+            .lokasi-select {
+                background-color: #334155;
+                border-color: #475569;
+                color: #e2e8f0;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            }
+            
+            .input-card {
+                background: #334155;
+                border-color: #475569;
+            }
+            
+            .number-input {
+                background: #1e293b;
+                border-color: #475569;
+                color: #f8fafc;
+            }
+            
+            .status-bar {
+                background: #334155;
+                border-top-color: #475569;
+            }
+            
+            .btn-logout {
+                background: #334155;
+                border-color: #475569;
+                color: #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ====== LOGIN PAGE ====== -->
+    <div class="login-container" id="loginPage">
+        <div class="login-header">
+            <div class="header-content">
+                <div class="login-icon">🚗</div>
+                <h1 class="login-title">PETUGAS PARKIR</h1>
+                <p class="login-subtitle">Operasi Lilin Progo 2025</p>
+            </div>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-group">
+                <label class="form-label">PILIH LOKASI PARKIR ANDA</label>
+                <select class="lokasi-select" id="lokasiLogin">
+                    <option value="">-- Pilih Lokasi --</option>
+                    <option value="1">1. SENOPATI - JL P. SENOPATI</option>
+                    <option value="2">2. NGABEAN - JL W. HASYIM</option>
+                    <option value="3">3. SRI WEDANI - JL SRI WEDANI</option>
+                    <option value="4">4. SPRAGA - JL KHA DAHLAN</option>
+                    <option value="5">5. RAMAI MALL - JL BESKALAN</option>
+                    <option value="6">6. GRAND ZURI - JL MARGO UTOMO</option>
+                    <option value="7">7. EX MANOA CAFE - JL ABU BAKAR ALI</option>
+                    <option value="8">8. MALIOBORO II - JL PABRINGAN</option>
+                    <option value="9">9. MALIOBORO III - JL KETANDAN 7</option>
+                    <option value="10">10. UTARA CAVINTON - JL LETJEND SUPRAPTO</option>
+                    <option value="11">11. GEMBIRA LOKA - JL KEBUN RAYA</option>
+                    <option value="12">12. KAWULA ALIT - JL GANDEKAN</option>
+                    <option value="13">13. PARKIRAN KOMANDO - JL SUDIRMAN</option>
+                    <option value="14">14. EKS TRIO - JL MARGOUTOMO</option>
+                    <option value="15">15. STADION KRIDOSONO - JL YOS SUDARSO</option>
+                </select>
+            </div>
+            
+            <button class="login-btn" onclick="login()">
+                <span>→</span> MASUK KE APLIKASI
+            </button>
+        </div>
+    </div>
+    
+    <!-- ====== INPUT PAGE ====== -->
+    <div class="input-container" id="inputPage">
+        <div class="input-header">
+            <div class="lokasi-badge" id="lokasiBadge">LOKASI 8</div>
+            <div class="lokasi-nama" id="lokasiNama">MALIOBORO II</div>
+            <div class="lokasi-alamat" id="lokasiAlamat">JL PABRINGAN</div>
+            
+            <div class="lokasi-info">
+                <div style="font-size: 14px; opacity: 0.9;">Masukkan jumlah tempat parkir yang tersedia</div>
+            </div>
+        </div>
+        
+        <div class="input-form">
+            <h2 class="input-title">KAPASITAS TERSEDIA</h2>
+            
+            <div class="kapasitas-grid">
+                <!-- BUS -->
+                <div class="input-card">
+                    <div class="card-icon">🚌</div>
+                    <label class="card-label">BUS</label>
+                    <input type="number" 
+                           class="number-input" 
+                           id="busInput"
+                           value="0"
+                           min="0"
+                           max="200"
+                           placeholder="0"
+                           inputmode="numeric">
+                </div>
+                
+                <!-- MOBIL -->
+                <div class="input-card">
+                    <div class="card-icon">🚗</div>
+                    <label class="card-label">MOBIL</label>
+                    <input type="number" 
+                           class="number-input" 
+                           id="mobilInput"
+                           value="80"
+                           min="0"
+                           max="500"
+                           placeholder="0"
+                           inputmode="numeric">
+                </div>
+                
+                <!-- MOTOR -->
+                <div class="input-card">
+                    <div class="card-icon">🏍️</div>
+                    <label class="card-label">MOTOR</label>
+                    <input type="number" 
+                           class="number-input" 
+                           id="motorInput"
+                           value="200"
+                           min="0"
+                           max="1000"
+                           placeholder="0"
+                           inputmode="numeric">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn-logout" onclick="logout()">
+                    <span>←</span> GANTI LOKASI
+                </button>
+                <button class="btn-submit" onclick="submitData()">
+                    <span>✓</span> KIRIM DATA
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-text" id="statusText">Siap menerima input</div>
+            <div class="status-time" id="currentTime">14:30</div>
+        </div>
+    </div>
+
+    <script>
+        // ====== DATA LOKASI ======
+        const lokasiData = {
+            "1": { nama: "SENOPATI", alamat: "JL P. SENOPATI" },
+            "2": { nama: "NGABEAN", alamat: "JL W. HASYIM" },
+            "3": { nama: "SRI WEDANI", alamat: "JL SRI WEDANI" },
+            "4": { nama: "SPRAGA", alamat: "JL KHA DAHLAN" },
+            "5": { nama: "RAMAI MALL", alamat: "JL BESKALAN" },
+            "6": { nama: "GRAND ZURI", alamat: "JL MARGO UTOMO" },
+            "7": { nama: "EX MANOA CAFE", alamat: "JL ABU BAKAR ALI" },
+            "8": { nama: "MALIOBORO II", alamat: "JL PABRINGAN" },
+            "9": { nama: "MALIOBORO III", alamat: "JL KETANDAN 7" },
+            "10": { nama: "UTARA CAVINTON", alamat: "JL LETJEND SUPRAPTO" },
+            "11": { nama: "GEMBIRA LOKA", alamat: "JL KEBUN RAYA" },
+            "12": { nama: "KAWULA ALIT", alamat: "JL GANDEKAN" },
+            "13": { nama: "PARKIRAN KOMANDO", alamat: "JL SUDIRMAN" },
+            "14": { nama: "EKS TRIO", alamat: "JL MARGOUTOMO" },
+            "15": { nama: "STADION KRIDOSONO", alamat: "JL YOS SUDARSO" }
+        };
+
+        // ====== VARIABLES ======
+        let currentLokasi = null;
+        let draftData = {};
+
+        // ====== LOGIN FUNCTION ======
+        function login() {
+            const select = document.getElementById('lokasiLogin');
+            const lokasiId = select.value;
+            
+            if (!lokasiId) {
+                alert("Silakan pilih lokasi parkir Anda terlebih dahulu");
+                select.focus();
+                return;
+            }
+            
+            // Set current lokasi
+            currentLokasi = lokasiId;
+            
+            // Update UI with lokasi info
+            document.getElementById('lokasiBadge').textContent = `LOKASI ${lokasiId}`;
+            document.getElementById('lokasiNama').textContent = lokasiData[lokasiId].nama;
+            document.getElementById('lokasiAlamat').textContent = lokasiData[lokasiId].alamat;
+            
+            // Load draft data if exists
+            loadDraftData(lokasiId);
+            
+            // Switch to input page
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('inputPage').style.display = 'block';
+            
+            // Focus on first input
+            setTimeout(() => {
+                document.getElementById('busInput').focus();
+            }, 300);
+            
+            console.log(`✅ Petugas masuk untuk lokasi: ${lokasiData[lokasiId].nama}`);
+        }
+
+        // ====== LOGOUT FUNCTION ======
+        function logout() {
+            // Save draft before logout
+            saveDraftData();
+            
+            // Reset to login page
+            document.getElementById('inputPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            
+            // Reset form
+            document.getElementById('lokasiLogin').value = '';
+            currentLokasi = null;
+            
+            console.log('👋 Petugas logout');
+        }
+
+        // ====== LOAD DRAFT DATA ======
+        function loadDraftData(lokasiId) {
+            try {
+                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
+                const draft = drafts[lokasiId];
+                
+                if (draft) {
+                    document.getElementById('busInput').value = draft.bus || 0;
+                    document.getElementById('mobilInput').value = draft.mobil || 0;
+                    document.getElementById('motorInput').value = draft.motor || 0;
+                    
+                    updateStatus(`Data draft ditemukan (${formatTime(draft.timestamp)})`, '#f59e0b');
+                }
+            } catch (error) {
+                console.log('No draft data found');
+            }
+        }
+
+        // ====== SAVE DRAFT DATA ======
+        function saveDraftData() {
+            if (!currentLokasi) return;
+            
+            const draft = {
+                bus: parseInt(document.getElementById('busInput').value) || 0,
+                mobil: parseInt(document.getElementById('mobilInput').value) || 0,
+                motor: parseInt(document.getElementById('motorInput').value) || 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
+                drafts[currentLokasi] = draft;
+                localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
+                
+                console.log(`💾 Draft disimpan untuk lokasi ${currentLokasi}`);
+            } catch (error) {
+                console.error('Error saving draft:', error);
+            }
+        }
+
+        // ====== SUBMIT DATA ======
+        function submitData() {
+            if (!currentLokasi) return;
+            
+            const bus = parseInt(document.getElementById('busInput').value) || 0;
+            const mobil = parseInt(document.getElementById('mobilInput').value) || 0;
+            const motor = parseInt(document.getElementById('motorInput').value) || 0;
+            
+            // Validate
+            if (bus < 0 || mobil < 0 || motor < 0) {
+                alert("Angka tidak boleh negatif");
+                return;
+            }
+            
+            // Prepare data
+            const data = {
+                lokasiId: currentLokasi,
+                lokasiNama: lokasiData[currentLokasi].nama,
+                bus: bus,
+                mobil: mobil,
+                motor: motor,
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('📤 Data dikirim:', data);
+            
+            // Update status
+            updateStatus('Mengirim data...', '#f59e0b');
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Save to localStorage
+                saveToStorage(data);
+                
+                // Clear draft
+                clearDraftData(currentLokasi);
+                
+                // Show success
+                updateStatus('✅ Data berhasil dikirim!', '#10b981');
+                
+                // Reset form
+                document.getElementById('busInput').value = 0;
+                document.getElementById('mobilInput').value = 0;
+                document.getElementById('motorInput').value = 0;
+                
+                // Auto-reset status after 3 seconds
+                setTimeout(() => {
+                    updateStatus('Siap menerima input', '');
+                }, 3000);
+                
+                // Show confirmation message
+                showToast(`Data ${lokasiData[currentLokasi].nama} berhasil dikirim!`);
+                
+            }, 1500);
+        }
+
+        // ====== STORAGE FUNCTIONS ======
+        function saveToStorage(data) {
+            try {
+                const existing = JSON.parse(localStorage.getItem('parkirUpdates') || '[]');
+                existing.push({
+                    ...data,
+                    id: Date.now()
+                });
+                
+                // Keep only last 100 entries
+                if (existing.length > 100) {
+                    existing.splice(0, existing.length - 100);
+                }
+                
+                localStorage.setItem('parkirUpdates', JSON.stringify(existing));
+                
+                console.log('💾 Data disimpan:', data);
+                
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+
+        function clearDraftData(lokasiId) {
+            try {
+                const drafts = JSON.parse(localStorage.getItem('parkirDrafts') || '{}');
+                delete drafts[lokasiId];
+                localStorage.setItem('parkirDrafts', JSON.stringify(drafts));
+            } catch (error) {
+                console.error('Error clearing draft:', error);
+            }
+        }
+
+        // ====== UI HELPER FUNCTIONS ======
+        function updateStatus(text, color = '') {
+            const statusEl = document.getElementById('statusText');
+            statusEl.textContent = text;
+            if (color) {
+                statusEl.style.color = color;
+            } else {
+                statusEl.style.color = '';
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeEl = document.getElementById('currentTime');
+            if (timeEl) {
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                timeEl.textContent = `${hours}:${minutes}`;
+            }
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #10b981;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideUp 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideDown 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ====== EVENT LISTENERS ======
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Aplikasi Petugas Parkir siap');
+            
+            // Auto-save draft on input change
+            document.querySelectorAll('.number-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    if (currentLokasi) {
+                        saveDraftData();
+                    }
+                });
+            });
+            
+            // Update time every minute
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Check for existing session
+            const session = localStorage.getItem('currentSession');
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    if (sessionData.lokasiId && lokasiData[sessionData.lokasiId]) {
+                        // Auto-login
+                        document.getElementById('lokasiLogin').value = sessionData.lokasiId;
+                        login();
+                    }
+                } catch (error) {
+                    // Invalid session
+                }
+            }
+        });
+
+        // Save session on page hide
+        window.addEventListener('beforeunload', function() {
+            if (currentLokasi) {
+                saveDraftData();
+                localStorage.setItem('currentSession', JSON.stringify({
+                    lokasiId: currentLokasi,
+                    timestamp: new Date().toISOString()
+                }));
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginPage').style.display !== 'none') {
+                login();
+            }
+            
+            if (e.key === 'Escape' && document.getElementById('inputPage').style.display !== 'none') {
+                logout();
+            }
+            
+            if (e.key === 's' && e.ctrlKey && document.getElementById('inputPage').style.display !== 'none') {
+                e.preventDefault();
+                submitData();
+            }
+        });
+    </script>
+</body>
+</html>
